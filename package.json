@@ -4,8 +4,8 @@
   "description": "It picks our next bookclub book",
   "main": "index.js",
   "scripts": {
-    "start": "node server",
-    "dev": "nodemon server"
+    "start": "node index",
+    "dev": "nodemon index"
   },
   "author": "AlexAlt",
   "license": "ISC",
@@ -13,6 +13,7 @@
     "nodemon": "^3.1.7"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "express": "^4.21.1"
   }
 }
