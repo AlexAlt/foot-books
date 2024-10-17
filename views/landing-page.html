@@ -14,10 +14,25 @@
     <h2>About Us</h2>
     <p>🦶 🥚</p>
     <h2>Currently Reading:</h2>
-    <p>TBD</p>
+    <p id="currently-reading"></p>
+    <a href="/books" class="link-class">View the list</a>
   </div>
   <footer class="footer-class">
     <p>&copy; 2023 Foot Slack.</p>
   </footer>
+  <script>
+    fetch('/api/books/currently-reading')
+      .then(response => response.json())
+      .then(book => {
+        const currentlyReading = document.querySelector('#currently-reading');
+
+        const bookInfo = document.createElement('p');
+        bookInfo.textContent = `${book.title}`;
+        if (book.author) {
+          bookInfo.textContent += ` by ${book.author}`;
+        }
+        currentlyReading.appendChild(bookInfo);
+      });
+  </script>
 </body>
 </html>

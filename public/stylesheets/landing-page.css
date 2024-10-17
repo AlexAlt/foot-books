@@ -1,28 +1,42 @@
 .body-class {
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  background-color: #7db89f; /* Light emerald */
 }
 .header-class {
-  background-color: #333;
+  background-color: #297850; /* Dark emerald */
   color: #fff;
   padding: 1rem 0;
   text-align: center;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
 }
 .container-class {
   max-width: 800px;
   margin: 2rem auto;
   padding: 1rem;
   background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+.link-class {
+  text-decoration: none;
+  color: #297850; /* Dark emerald */
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+.link-class:hover {
+  color: #66bb6a; /* Medium emerald */
 }
 .footer-class {
-  background-color: #333;
+  background-color: #297850; /* Dark emerald */
   color: #fff;
   text-align: center;
   padding: 1rem 0;
   position: fixed;
   width: 100%;
   bottom: 0;
+  font-size: 1.2rem;
 }
