@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const bookSchema = new Schema({
@@ -9,6 +9,7 @@ const bookSchema = new Schema({
   meta: {
     imageUrl: String,
   }
-})
+});
 
-module.exports = mongoose.model('Book', bookSchema)
+const Book = mongoose.model('Book', bookSchema);
+export default Book;

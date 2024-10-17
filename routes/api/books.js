@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
+import { handleNewBook } from '../../controllers/booksController.js';
 const router = express.Router();
-const booksController = require ('../../controllers/booksController');
 
-router.post('/', booksController.handleNewBook);
+router.post('/', handleNewBook);
 
-module.exports = router;
+export default router;
