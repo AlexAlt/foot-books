@@ -1,16 +1,27 @@
-require('dotenv').config();
-const express = require('express');
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import path from 'path';
+import mongoose from 'mongoose';
+import connectDB from './config/dbConn.js';
+import rootRoutes from './routes/root.js';
+import booksRoutes from './routes/api/books.js';
+
 const app = express();
-const path = require('path');
 const PORT = process.env.PORT;
 
-app.use(express.static(__dirname + '/public'));
-app.use('/', require('./routes/root'));
+connectDB();
+
+app.use(express.json());
+
+app.use(express.static(path.resolve(process.cwd(), 'public')));
+app.use('/', rootRoutes);
+app.use('/books', booksRoutes);
 
 app.all('*', (req, res) => {
   res.status(404);
   if (req.accepts('html')) {
-      res.sendFile(path.join(__dirname, 'views', '404.html'));
+      res.sendFile(path.join(path.resolve(process.cwd(), 'views', '404.html')));
   } else if (req.accepts('json')) {
       res.json({ "error": "404 Not Found" });
   } else {
@@ -18,4 +29,7 @@ app.all('*', (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+mongoose.connection.once('open', () => { 
+  console.log('connected to MongoDB')
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
