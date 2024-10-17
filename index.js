@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import connectDB from './config/dbConn.js';
 import rootRoutes from './routes/root.js';
 import booksRoutes from './routes/api/books.js';
-import bookHTMLRoutes from './routes/books.js';
+import booksHTMLRoutes from './routes/books.js';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.use(express.static(path.resolve(process.cwd(), 'public')));
 app.use('/', rootRoutes);
-app.use('/books', bookHTMLRoutes);
+app.use('/books', booksHTMLRoutes);
 app.use('/api/books', booksRoutes);
 
 app.all('*', (req, res) => {

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book List</title>
+  <link rel="stylesheet" type="text/css" href="stylesheets/books.css" />
+</head>
+<body>
+  <h1>Reading List</h1>
+  <h3>Currently Reading</h3>
+  <p id="currently-reading">
+    <!-- currently reading will be rendered here -->
+  </p>  
+
+  <h3>To Be Read</h3>
+  <ul id="book-list">
+    <!-- TBR books will be rendered here -->
+  </ul>
+
+  <h3>Completed</h3>
+  <ul id="completed-list">
+    <!-- Already read books will be rendered here -->
+  </ul>
+
+  <script>
+    fetch('/api/books')
+      .then(response => response.json())
+      .then(books => {
+        const bookCategories = {
+          read: [],
+          currentlyReading: null,
+          toBeRead: []
+        };
+
+        books.forEach(book => {
+          if (book.currentlyReading) {
+            bookCategories.currentlyReading = book;
+          } else if (book.readOn) {
+            bookCategories.read.push(book);
+          } else {
+            bookCategories.toBeRead.push(book);
+          }
+        });
+
+        const currentBook = document.getElementById('currently-reading');
+        if (bookCategories.currentlyReading) {
+          let contents = `${bookCategories.currentlyReading.title}`;
+          if (bookCategories.currentlyReading.author) {
+            contents.concat(` by ${bookCategories.currentlyReading.author}`);
+          }
+          currentBook.textContent = contents;
+        }
+
+        const bookList = document.getElementById('book-list');
+        bookCategories.toBeRead.forEach(b => {
+          const li = document.createElement('li');
+          let contents = `${b.title}`;
+          if (b.author) {
+            contents += ` by ${b.author}`;
+          }
+          li.textContent = contents;
+          bookList.appendChild(li);
+        });
+
+        const completedList = document.getElementById('completed-list');
+        bookCategories.read.forEach(b => {
+          const li = document.createElement('li');
+          let contents = `${b.title}`;
+          if (b.author) {
+            contents += ` by ${b.author}`;
+          }
+          li.textContent = contents;
+          completedList.appendChild(li);
+        });
+      })
+      .catch(error => console.error('Error fetching books:', error));
+  </script>
+</body>
+</html>
