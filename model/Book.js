@@ -11,5 +11,13 @@ const bookSchema = new Schema({
   }
 });
 
+export const sortBooks = async() => {
+  return {
+    currentlyReading: await Book.findOne({ currentlyReading: true }).exec(),
+    read: await Book.find({ readOn: { $exists: true }, currentlyReading: false }).exec(),
+    toBeRead: await Book.find({ readOn: { $exists: false }, currentlyReading: false }).exec()
+  };
+}
+
 const Book = mongoose.model('Book', bookSchema);
 export default Book;

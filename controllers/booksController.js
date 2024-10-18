@@ -1,4 +1,4 @@
-import Book from '../model/Book.js';
+import Book, { sortBooks } from '../model/Book.js';
 
 export const handleNewBook = async (req, res) => {
   const { title, author, readOn } = req.body;
@@ -28,6 +28,15 @@ export const handleGetBooks = async (req, res) => {
   try {
     const books = await Book.find().exec();
     res.status(200).json(books);
+  } catch (err) {
+    res.status(500).json({ 'message': err.message });
+  }
+}
+
+export const getSortedBooks = async (req, res) => {
+  try {
+    const sortedBooks = await sortBooks();
+    res.status(200).json(sortedBooks);
   } catch (err) {
     res.status(500).json({ 'message': err.message });
   }
