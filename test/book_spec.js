@@ -20,18 +20,23 @@ describe('book', function() {
     });
 });
 
-describe('sortBooks', function() {
-    it('should sort books into read, currentlyReading, and toBeRead', function(done) {
-        const books = [
-            { title: 'Book 1', currentlyReading: true },
-            { title: 'Book 2', readOn: new Date() },
-            { title: 'Book 3' }
-        ];
+describe('sortBooks', function (done) {
+    // seed models in DB
+    beforeEach(() => { 
+        const reading =  new Book({ title: 'Book 1', currentlyReading: true })
+        const read =  new Book({ title: 'Book 2', readOn: new Date() })
+        const tbr =  new Book({ title: 'Book 3' })
 
-        const sortedBooks = sortBooks(books);
-        expect(sortedBooks.currentlyReading.title).to.equal('Book 1');
-        expect(sortedBooks.read[0].title).to.equal('Book 2');
-        expect(sortedBooks.toBeRead[0].title).to.equal('Book 3');
-        done();
+        reading.save() 
+            .then(() => read.save())
+            .then(() => tbr.save())
+            .then(() => done()); 
+    }); 
+    it('should sort books into read, currentlyReading, and toBeRead', async function () {
+        sortBooks().then(() => {
+            expect(sortedBooks.reading[0].title).to.equal('Book 1')
+            expect(sortedBooks.read[0].title).to.equal('Book 2');
+            expect(sortedBooks.toBeRead[0].title).to.equal('Book 3');
+        })
     });
 });

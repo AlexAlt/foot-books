@@ -11,23 +11,12 @@ const bookSchema = new Schema({
   }
 });
 
-export const sortBooks = (books) => {
-  const sortedBooks = {
-    read: [],
-    currentlyReading: null,
-    toBeRead: []
+export const sortBooks = async() => {
+  return {
+    read: await Book.findOne({ currentlyReading: true }).exec(),
+    currentlyReading: await Book.find({ readOn: {$exists: true }, currentlyReading: false }).exec(),
+    toBeRead: await Book.find({ readOn: {$exists: false }, currentlyReading: false }).exec()
   };
-
-  books.forEach(book => {
-    if (book.currentlyReading) {
-      sortedBooks.currentlyReading = book;
-    } else if (book.readOn) {
-      sortedBooks.read.push(book);
-    } else {
-      sortedBooks.toBeRead.push(book);
-    }
-  });
-  return sortedBooks;
 }
 
 const Book = mongoose.model('Book', bookSchema);
