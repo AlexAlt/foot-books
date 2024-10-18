@@ -13,9 +13,9 @@ const bookSchema = new Schema({
 
 export const sortBooks = async() => {
   return {
-    read: await Book.findOne({ currentlyReading: true }).exec(),
-    currentlyReading: await Book.find({ readOn: {$exists: true }, currentlyReading: false }).exec(),
-    toBeRead: await Book.find({ readOn: {$exists: false }, currentlyReading: false }).exec()
+    currentlyReading: await Book.findOne({ currentlyReading: true }).exec(),
+    read: await Book.find({ readOn: { $exists: true }, currentlyReading: false }).exec(),
+    toBeRead: await Book.find({ readOn: { $exists: false }, currentlyReading: false }).exec()
   };
 }
 

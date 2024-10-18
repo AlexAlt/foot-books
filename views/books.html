@@ -31,37 +31,32 @@
     fetch('/api/books/sorted-books')
       .then(response => response.json())
       .then(books => {
+        const createListItems = function (list, elem) {
+          list.forEach(b => {
+            const li = document.createElement('li');
+            let contents = `${b.title}`;
+            if (b.author) {
+              contents += ` by ${b.author}`;
+            }
+            li.textContent = contents;
+            elem.appendChild(li)
+          })
+        }
+        const bookList = document.getElementById('book-list');
+        createListItems(books.toBeRead, bookList)
 
+        const completedList = document.getElementById('completed-list');
+        createListItems(books.read, completedList)
+        
         const currentBook = document.getElementById('currently-reading');
         if (books.currentlyReading) {
-          let contents = `${books.currentlyReading.title}`;
+          let contents = books.currentlyReading.title;
           if (books.currentlyReading.author) {
             contents.concat(` by ${books.currentlyReading.author}`);
           }
           currentBook.textContent = contents;
         }
 
-        const bookList = document.getElementById('book-list');
-        books.toBeRead.forEach(b => {
-          const li = document.createElement('li');
-          let contents = `${b.title}`;
-          if (b.author) {
-            contents += ` by ${b.author}`;
-          }
-          li.textContent = contents;
-          bookList.appendChild(li);
-        });
-
-        const completedList = document.getElementById('completed-list');
-        books.read.forEach(b => {
-          const li = document.createElement('li');
-          let contents = `${b.title}`;
-          if (b.author) {
-            contents += ` by ${b.author}`;
-          }
-          li.textContent = contents;
-          completedList.appendChild(li);
-        });
       })
       .catch(error => console.error('Error fetching books:', error));
   </script>
