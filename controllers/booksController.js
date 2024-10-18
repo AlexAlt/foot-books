@@ -1,15 +1,17 @@
 import Book, { sortBooks } from '../model/Book.js';
 
 export const handleNewBook = async (req, res) => {
+  // TODO add meta data fields
   const { title, author, readOn } = req.body;
   if (!title) {
     return res.status(400).json({ 'message': 'Title is required' });
   }
 
-  const duplicate = await Book.findOne({ title: title }).exec();
+  const match = new RegExp(title, 'i');
+  const duplicate = await Book.findOne({ title: { $regex: match }}).exec();
 
   if (duplicate) {
-    return res.sendStatus(409);
+    return res.status(409).json({'message': 'Title already exists'});
   }
 
   try {
@@ -18,7 +20,7 @@ export const handleNewBook = async (req, res) => {
       'author': author,
       'readOn': readOn
     });
-    res.status(201).json({ 'success': `New book ${title} added!` });
+    res.status(201).json({ 'message': `New book ${title} added!` });
   } catch (err) {
     res.status(500).json({ 'message': err.message });
   }
