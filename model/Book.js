@@ -11,5 +11,24 @@ const bookSchema = new Schema({
   }
 });
 
+export const sortBooks = (books) => {
+  const sortedBooks = {
+    read: [],
+    currentlyReading: null,
+    toBeRead: []
+  };
+
+  books.forEach(book => {
+    if (book.currentlyReading) {
+      sortedBooks.currentlyReading = book;
+    } else if (book.readOn) {
+      sortedBooks.read.push(book);
+    } else {
+      sortedBooks.toBeRead.push(book);
+    }
+  });
+  return sortedBooks;
+}
+
 const Book = mongoose.model('Book', bookSchema);
 export default Book;
