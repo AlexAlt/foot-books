@@ -24,7 +24,6 @@ describe('book', function() {
         await mongoose.connection.close();
     });
 
-    // skipping for now- false positive 
     it('should be invalid if title is empty', async function() {
         const book = new Book();
         try {
