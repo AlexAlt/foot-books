@@ -17,7 +17,7 @@ export const toBeRead = async () => {
 
 export const sortBooks = async() => {
   return {
-    currentlyReading: await Book.findOne({ currentlyReading: true }).exec(),
+    currentlyReading: await Book.find({ currentlyReading: true }).exec(),
     read: await Book.find({ readOn: { $exists: true }, currentlyReading: false }).exec(),
     toBeRead: await toBeRead(),
   };

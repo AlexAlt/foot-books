@@ -32,7 +32,7 @@ export const getRandomBook = async (req, res) => {
   try {
     const books = await toBeRead();
     if (books) {
-      selection = books[Math.floor(Math.random() * books.length)]
+      selection = books[Math.floor(Math.random() * (books.length - 1))]
     }
     res.status(200).json(selection);
   } catch (err) {
