@@ -1,42 +1,79 @@
+import mongoose from 'mongoose';
 import { expect } from 'chai';
- 
-import Book, { sortBooks } from '../model/Book.js';
- 
-describe('book', function() {
-    // skipping for now- false positive 
-    xit('should be invalid if title is empty', function(done) {
-        const book = new Book();
+import dotenv from 'dotenv';
+dotenv.config();
 
-        book.validate(function(err) {
-            expect(err.errors.title).to.exist;
-        });
-        done();
+import Book, { sortBooks, toBeRead } from '../model/Book.js';
+
+const connectToDatabase = async () => {
+    await mongoose.connect(process.env.TEST_DATABASE_URI)
+    const db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error'));
+    db.once('open', function() {
+        console.log('We are connected to test database!');
+    });
+};
+
+describe('book', function() {
+    beforeEach(async function() {
+        await connectToDatabase();
     });
 
-    it('should set default value for currentlyReading', function(done) {
+    afterEach(async function() {
+        await mongoose.connection.dropCollection('books');
+        await mongoose.connection.close();
+    });
+
+    it('should be invalid if title is empty', async function() {
         const book = new Book();
+        try {
+            book.validate();
+        } catch (err) {
+            expect(err.errors.title).to.exist;
+        }
+    });
+
+    it('should set default value for currentlyReading', async function() {
+        const book = new Book({title: 'Book 1'});
+        await book.save();
         expect(book.currentlyReading).to.be.false;
-        done();
     });
 });
 
-describe('sortBooks', function (done) {
-    // seed models in DB
-    beforeEach(() => { 
-        const reading =  new Book({ title: 'Book 1', currentlyReading: true })
-        const read =  new Book({ title: 'Book 2', readOn: new Date() })
-        const tbr =  new Book({ title: 'Book 3' })
-
-        reading.save() 
-            .then(() => read.save())
-            .then(() => tbr.save())
-            .then(() => done()); 
+describe('reading books from the database', function() {
+    let reading, read, tbr1, tbr2;
+    beforeEach(async function() { 
+        await connectToDatabase();
+        // seed models in DB
+        reading = new Book({ title: 'Book 1', currentlyReading: true });
+        read = new Book({ title: 'Book 2', readOn: new Date() });
+        tbr1 = new Book({ title: 'Book 3' });
+        tbr2 = new Book({ title: 'Book 4' });
+        await reading.save();
+        await read.save();
+        await tbr1.save();
+        await tbr2.save();
     }); 
-    it('should sort books into read, currentlyReading, and toBeRead', async function () {
-        sortBooks().then(() => {
-            expect(sortedBooks.reading[0].title).to.equal('Book 1')
+      
+    afterEach(async function() {
+        await mongoose.connection.dropCollection('books');
+        await mongoose.connection.close();
+    });
+
+    describe('toBeRead', function() {
+        it('should return books that are not read and not currentlyReading', async function() {
+            const books = await toBeRead();
+            expect(books.length).to.equal(2);
+            expect([tbr1.title, tbr2.title]).to.include(books[0].title);
+        });
+    });
+    
+    describe('sortBooks', function() {
+        it('should sort books into read, currentlyReading, and toBeRead', async function() {
+            const sortedBooks = await sortBooks();
+            expect(sortedBooks.currentlyReading[0].title).to.equal('Book 1');
             expect(sortedBooks.read[0].title).to.equal('Book 2');
-            expect(sortedBooks.toBeRead[0].title).to.equal('Book 3');
-        })
+            expect(sortedBooks.toBeRead.map(book => book.title)).to.have.members(['Book 3', 'Book 4']);
+        });
     });
 });

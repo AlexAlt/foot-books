@@ -49,13 +49,7 @@
         createListItems(books.read, completedList)
         
         const currentBook = document.getElementById('currently-reading');
-        if (books.currentlyReading) {
-          let contents = books.currentlyReading.title;
-          if (books.currentlyReading.author) {
-            contents.concat(` by ${books.currentlyReading.author}`);
-          }
-          currentBook.textContent = contents;
-        }
+        createListItems(books.currentlyReading, currentBook)
 
       })
       .catch(error => console.error('Error fetching books:', error));

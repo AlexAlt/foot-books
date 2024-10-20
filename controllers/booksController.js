@@ -1,8 +1,8 @@
-import Book, { sortBooks } from '../model/Book.js';
+import Book, { sortBooks, toBeRead } from '../model/Book.js';
 
-export const handleNewBook = async (req, res) => {
+export const createBook = async (req, res) => {
   // TODO add meta data fields
-  const { title, author, readOn } = req.body;
+  const { title, author, readOn, currentlyReading } = req.body;
   if (!title) {
     return res.status(400).json({ 'message': 'Title is required' });
   }
@@ -18,7 +18,8 @@ export const handleNewBook = async (req, res) => {
     const result = await Book.create({
       'title': title,
       'author': author,
-      'readOn': readOn
+      'readOn': readOn,
+      'currentlyReading': currentlyReading
     });
     res.status(201).json({ 'message': `New book ${title} added!` });
   } catch (err) {
@@ -26,7 +27,20 @@ export const handleNewBook = async (req, res) => {
   }
 };
 
-export const handleGetBooks = async (req, res) => {
+export const getRandomBook = async (req, res) => {
+  let selection;
+  try {
+    const books = await toBeRead();
+    if (books) {
+      selection = books[Math.floor(Math.random() * (books.length - 1))]
+    }
+    res.status(200).json(selection);
+  } catch (err) {
+    res.status(500).json({ 'message': err.message });
+  }
+}
+
+export const getBooks = async (req, res) => {
   try {
     const books = await Book.find().exec();
     res.status(200).json(books);
