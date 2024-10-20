@@ -11,11 +11,15 @@ const bookSchema = new Schema({
   }
 });
 
+export const toBeRead = async () => {
+  return await Book.find({ readOn: { $exists: false }, currentlyReading: false }).exec();
+}
+
 export const sortBooks = async() => {
   return {
     currentlyReading: await Book.findOne({ currentlyReading: true }).exec(),
     read: await Book.find({ readOn: { $exists: true }, currentlyReading: false }).exec(),
-    toBeRead: await Book.find({ readOn: { $exists: false }, currentlyReading: false }).exec()
+    toBeRead: await toBeRead(),
   };
 }
 
