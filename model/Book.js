@@ -11,6 +11,13 @@ const bookSchema = new Schema({
   }
 });
 
+
+bookSchema.methods.updateMultipleFields = function(compactedParams = {}) {
+  return Object.entries(compactedParams).forEach(param => {
+    this[`${param[0]}`] = param[1]
+  });
+}
+
 export const toBeRead = async () => {
   return await Book.find({ readOn: { $exists: false }, currentlyReading: false }).exec();
 }

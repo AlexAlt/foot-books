@@ -1,4 +1,8 @@
+import mongoose from 'mongoose';
 import Book, { sortBooks, toBeRead } from '../model/Book.js';
+import { compact } from '../util/objectUtils.js'
+
+const { ObjectId } = mongoose.mongo;
 
 export const createBook = async (req, res) => {
   // TODO add meta data fields
@@ -22,6 +26,38 @@ export const createBook = async (req, res) => {
       'currentlyReading': currentlyReading
     });
     res.status(201).json({ 'message': `New book ${title} added!` });
+  } catch (err) {
+    res.status(500).json({ 'message': err.message });
+  }
+};
+
+export const updateBook = async (req, res) => {
+  const { body: { title, author, readOn, currentlyReading, meta }, params: { id } } = req;
+  const objectId = new ObjectId(id);
+
+  const updateParams = {
+    'title': title,
+    'author': author,
+    'readOn': readOn,
+    'currentlyReading': currentlyReading,
+    'meta': meta,
+  };
+  
+  const foundBook = await Book.findOne({_id: objectId}).exec();
+  try {
+    if (foundBook) {
+      const compactedParams = compact(updateParams)
+
+      foundBook.updateMultipleFields(compactedParams);
+      // Object.entries(compactedParams).forEach(param => {
+      //   foundBook[`${param[0]}`] = param[1]
+      // });
+
+      const result = await foundBook.save();
+      res.status(200).json({ 'message': `Updated ${result.title}` });
+    } else {
+      res.sendStatus(404)
+    }
   } catch (err) {
     res.status(500).json({ 'message': err.message });
   }
