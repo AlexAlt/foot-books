@@ -12,10 +12,11 @@ const bookSchema = new Schema({
 });
 
 
-bookSchema.methods.updateMultipleFields = function(compactedParams = {}) {
-  return Object.entries(compactedParams).forEach(param => {
+bookSchema.methods.updateAndSaveMultipleFields = function(compactedParams = {}) {
+  Object.entries(compactedParams).forEach(param => {
     this[`${param[0]}`] = param[1]
   });
+  return this.save();
 }
 
 export const toBeRead = async () => {

@@ -87,11 +87,10 @@ describe('updating books', function() {
         await mongoose.connection.close();
     });
 
-    describe('updateMultipleFields', function() {
+    describe('updateAndSaveMultipleFields', function() {
         it('updates multiple fields at once', async function() {
             const book1 = await Book.findOne({title: 'Book 1'});
-            book1.updateMultipleFields({title: 'Book 123', author: 'Me'})
-            const result = await book1.save();
+            const result = await book1.updateAndSaveMultipleFields({title: 'Book 123', author: 'Me'});
             expect(result.title).to.equal('Book 123');
             expect(result.author).to.equal('Me');
             // Does not update existing fields

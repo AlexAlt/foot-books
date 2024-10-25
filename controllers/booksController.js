@@ -47,8 +47,7 @@ export const updateBook = async (req, res) => {
   try {
     if (foundBook) {
       const compactedParams = compact(updateParams)
-      foundBook.updateMultipleFields(compactedParams);
-      const result = await foundBook.save();
+      const result = await foundBook.updateAndSaveMultipleFields(compactedParams);
       res.status(200).json({ 'message': `Updated ${result.title}` });
     } else {
       res.sendStatus(404)
