@@ -11,7 +11,6 @@ describe('objectUtils', function() {
 
       const compacted = compact(obj);
       expect(compacted).to.not.have.property('author');
-      
       expect(compacted).to.have.property('title');
     });
   });
