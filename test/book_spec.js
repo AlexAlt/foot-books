@@ -9,9 +9,6 @@ const connectToDatabase = async () => {
     await mongoose.connect(process.env.TEST_DATABASE_URI)
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error'));
-    db.once('open', function() {
-        console.log('We are connected to test database!');
-    });
 };
 
 describe('book', function() {
@@ -77,3 +74,28 @@ describe('reading books from the database', function() {
         });
     });
 });
+
+describe('updating books', function() {
+    beforeEach(async function() {
+        await connectToDatabase();
+        const book = new Book({title: 'Book 1', currentlyReading: true});
+        await book.save();
+    });
+
+    afterEach(async function() {
+        await mongoose.connection.dropCollection('books');
+        await mongoose.connection.close();
+    });
+
+    describe('updateMultipleFields', function() {
+        it('updates multiple fields at once', async function() {
+            const book1 = await Book.findOne({title: 'Book 1'});
+            book1.updateMultipleFields({title: 'Book 123', author: 'Me'})
+            const result = await book1.save();
+            expect(result.title).to.equal('Book 123');
+            expect(result.author).to.equal('Me');
+            // Does not update existing fields
+            expect(result.currentlyReading).to.be.true;
+        })
+    })
+})
