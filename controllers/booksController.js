@@ -33,7 +33,7 @@ export const createBook = async (req, res) => {
 
 export const updateBook = async (req, res) => {
   const { body: { title, author, readOn, currentlyReading, meta }, params: { id } } = req;
-  const objectId = new ObjectId(id);
+  const objectId = ObjectId.createFromHexString(id);
 
   const updateParams = {
     'title': title,
@@ -47,12 +47,7 @@ export const updateBook = async (req, res) => {
   try {
     if (foundBook) {
       const compactedParams = compact(updateParams)
-
       foundBook.updateMultipleFields(compactedParams);
-      // Object.entries(compactedParams).forEach(param => {
-      //   foundBook[`${param[0]}`] = param[1]
-      // });
-
       const result = await foundBook.save();
       res.status(200).json({ 'message': `Updated ${result.title}` });
     } else {
