@@ -13,9 +13,16 @@ const bookSchema = new Schema({
 
 
 bookSchema.methods.updateAndSaveMultipleFields = function(compactedParams = {}) {
-  Object.entries(compactedParams).forEach(param => {
-    this[`${param[0]}`] = param[1]
-  });
+  for (const key in compactedParams) {
+    if (!bookSchema.paths[key]) {
+      throw new Error(`Invalid field: ${key}`);
+    }
+  }
+
+  for (const key in compactedParams) {
+    this[key] = compactedParams[key];
+  }
+
   return this.save();
 }
 

@@ -96,5 +96,16 @@ describe('updating books', function() {
             // Does not update existing fields
             expect(result.currentlyReading).to.be.true;
         })
+
+        it('throws an error if field does not exist', async function() {
+            const book1 = await Book.findOne({title: 'Book 1'});
+            try {
+                const result = await book1.updateAndSaveMultipleFields({title: 'Book 123', thingy: 'Thangy'});
+            } catch(error) {
+                expect(error.message).to.equal('Invalid field: thingy')
+                // does not save any of the passed properties if there are invalid fields
+                expect(book1.title).to.equal('Book 1')
+            }
+        });
     })
 })
