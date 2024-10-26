@@ -12,9 +12,14 @@
   <div class="reading-list">
     <div class="bg-transparent card border-0 mx-3 px-1">
       <h3>Currently Reading</h3>
-      <p id="currently-reading">
-        <!-- currently reading will be rendered here -->
-      </p>  
+      <div class="d-flex align-items-center">
+        <p id="currently-reading" class="mb-0 mr-3">
+          <!-- currently reading will be rendered here -->
+        </p>
+        <button id="mark-as-read" class="btn btn-primary btn-sm" hidden="true">
+          Mark as Read
+        </button>
+      </div>
   
       <h3>To Be Read</h3>
       <ul id="book-list">
@@ -38,6 +43,7 @@
             if (b.author) {
               contents += ` by ${b.author}`;
             }
+            li.setAttribute("id", b._id);
             li.textContent = contents;
             elem.appendChild(li)
           })
@@ -50,9 +56,38 @@
         
         const currentBook = document.getElementById('currently-reading');
         createListItems(books.currentlyReading, currentBook)
+        if (books.currentlyReading.length > 0) {
+          document.getElementById('mark-as-read').hidden = false;
+        }
 
       })
       .catch(error => console.error('Error fetching books:', error));
+
+
+
+      const button = document.getElementById("mark-as-read");
+
+      button.addEventListener("click", markAsRead);
+
+      function markAsRead() {
+        const currentBookId = document.querySelector('#currently-reading li').id;
+        fetch(`/api/books/${currentBookId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ readOn: new Date().toISOString(), currentlyReading: false })
+        })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(response.message);
+          }
+        })
+        .then(() => {
+          window.location.reload();
+        })
+      }
+
   </script>
 </body>
 </html>
