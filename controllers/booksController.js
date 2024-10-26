@@ -88,6 +88,16 @@ export const getSortedBooks = async (req, res) => {
   }
 }
 
+export const getBooksPageData = async (req, res) => {
+  try {
+    const sortedBooks = await sortBooks();
+    res.render('books', { books: sortedBooks });
+  } catch (err) {
+    // to do: make this render just the message
+    res.status(500).json({ 'message': err.message });
+  }
+}
+
 export const getCurrentlyReading = async (req, res) => {
   try {
     const books = await Book.find({ currentlyReading: true }).exec();

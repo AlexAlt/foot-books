@@ -1,10 +1,16 @@
 import express from 'express';
-import path from 'path';
 const router = express.Router();
+import Book from '../model/Book.js'
 
 /* GET landing page. */
-router.get("/", function (req, res) {
-  res.sendFile(path.join(process.cwd(), 'views', 'landing-page.html'));
+router.get("/", async (req, res) => {
+  try {
+    const currentlyReading = await Book.find({ currentlyReading: true }).exec();
+    res.render('landing-page', { currentlyReading: currentlyReading[0] });
+  } catch (err) {
+    // to do: make this render just the message
+    res.status(500).json({ 'message': err.message });
+  }
 });
 
 export default router;
