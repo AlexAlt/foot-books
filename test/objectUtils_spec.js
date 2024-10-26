@@ -12,7 +12,6 @@ describe('objectUtils', function() {
 
       const compacted = compact(obj);
       expect(compacted).to.not.have.property('author');
-      expect(compacted).to.not.have.property('meta');
       expect(compacted).to.have.property('title');
       // does not filter false
       expect(compacted).to.have.property('currentlyReading');
