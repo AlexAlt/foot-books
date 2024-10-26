@@ -80,13 +80,11 @@
         .then((response) => {
           if (!response.ok) {
             throw new Error(response.message);
+          } else {
+            window.location.reload();
           }
         })
-        .then(() => {
-          window.location.reload();
-        })
       }
-
   </script>
 </body>
 </html>
