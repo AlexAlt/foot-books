@@ -11,7 +11,6 @@ const bookSchema = new Schema({
   }
 });
 
-
 bookSchema.methods.updateAndSaveMultipleFields = function(params = {}) {
   for (const key in params) {
     if (!bookSchema.paths[key]) {

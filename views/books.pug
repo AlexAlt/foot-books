@@ -4,44 +4,69 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title 🦶 Book List
-    link(rel="stylesheet" type="text/css" href="stylesheets/books.css")
     link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous")
   body
-    h1 Reading List
-    .reading-list
-      .bg-transparent.card.border-0.mx-3.px-1
-        h3 Currently Reading
-        .d-flex.align-items-center
-          ul#currently-reading.mb-0.mr-3
-            each book in books.currentlyReading
-              li(id=book._id) #{book.title} by #{book.author}
-              button#mark-as-read.btn.btn-primary.btn-sm Mark as Read
+  .container.mt-5
+      .row
+        .col-md-8.offset-md-2
+          h1.text-center.mb-4 Reading List
+          .card
+            .card-body
+              .bg-transparent.card.border-0.mx-3.px-1
+                h3 Currently Reading
+                .d-flex.align-items-center
+                if books
+                  ul#currently-reading.mb-0.mr-3.mb-3
+                    each book in books.currentlyReading
+                      li(id=book._id) #{book.title} by #{book.author}
+                      button(id=book._id onclick="markAsRead()").btn.btn-primary.btn-sm Mark as Read
 
-        h3 To Be Read
-        .d-flex.align-items-center
-          ul#book-list
-            each book in books.toBeRead
-              li(id=book._id) #{book.title} by #{book.author}
-              button#select-to-read.btn.btn-primary.btn-sm Select to Read
+                h3 To Be Read
+                .d-flex.align-items-center.mb-2
+                  a(href='books/add').mr-3 Add to the list
+                  a(href='/books/rand')#pick-random 🎲 Select Next Read
+                .d-flex.align-items-center
+                if books
+                  ul
+                    each book in books.toBeRead
+                      li(id=book._id) #{book.title} by #{book.author}
+                      button(id=book._id onclick="selectToRead()").btn.btn-primary.btn-sm Select to Read
 
-        h3 Completed
-        ul#completed-list
-          each book in books.read
-            li(id=book._id) #{book.title} by #{book.author}
+                h3 Completed
+                if books
+                  ul
+                    each book in books.read
+                      li(id=book._id) #{book.title} by #{book.author}
+  .text-center.mt-4
+    a(href='/') 🦶 Books Home
 
   script.
-    const button = document.getElementById("mark-as-read");
-
-    button.addEventListener("click", markAsRead);
-
     function markAsRead() {
-      const currentBookId = document.querySelector('#currently-reading li').id;
+      const currentBookId = event.target.id;
       fetch(`/api/books/${currentBookId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ readOn: new Date().toISOString(), currentlyReading: false })
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.message);
+        } else {
+          window.location.reload();
+        }
+      })
+    }
+
+    function selectToRead() {
+      const selectedBookId = event.target.id;
+      fetch(`/api/books/${selectedBookId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ currentlyReading: true })
       })
       .then((response) => {
         if (!response.ok) {

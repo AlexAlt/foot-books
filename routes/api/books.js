@@ -6,7 +6,7 @@ import {
   getCurrentlyReading, 
   getSortedBooks,
   updateBook,
- } from '../../controllers/booksController.js';
+ } from '../../controllers/api/booksController.js';
 const router = express.Router();
 
 router.post('/', createBook);
