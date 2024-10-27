@@ -14,6 +14,7 @@ const PORT = process.env.PORT;
 connectDB();
 
 app.use(express.json());
+app.set('view engine', 'pug')
 
 app.use(express.static(path.resolve(process.cwd(), 'public')));
 app.use('/', rootRoutes);
