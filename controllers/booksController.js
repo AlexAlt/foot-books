@@ -18,14 +18,15 @@ export const createBook = async (req, res) => {
     return res.status(409).json({'message': 'Title already exists'});
   }
 
+  const params = compact({
+    'title': title,
+    'author': author,
+    'readOn': readOn,
+    'currentlyReading': currentlyReading
+  })
   try {
-    const result = await Book.create({
-      'title': title,
-      'author': author,
-      'readOn': readOn,
-      'currentlyReading': currentlyReading
-    });
-    res.status(201).json({ 'message': `New book ${title} added!` });
+    const result = await Book.create(params);
+    res.status(201).json({ 'message': `New book ${result.title} added!` });
   } catch (err) {
     res.status(500).json({ 'message': err.message });
   }

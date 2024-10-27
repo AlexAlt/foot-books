@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", getBooksPageData);
 router.get("/add", function(req, res) {
-  res.sendFile(path.join(process.cwd(), 'views', 'add-a-book.html'));
+  res.render('add-book');
 })
 
 export default router;

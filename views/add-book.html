@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a New Book</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <div class="container mt-5">
+      <h1 class="mb-4">Add a New Book</h1>
+      <form id="addBookForm" action="/api/books" method="POST">
+        <div class="form-group">
+          <label for="title">Title *:</label>
+          <input class="form-control" type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+          <label for="author">Author:</label>
+          <input class="form-control" type="text" id="author" name="author"><small class="form-text text-muted" id="authorHelpText">Optional</small>
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="currentlyReading" name="currentlyReading">
+            <label class="form-check-label" for="currentlyReading">Currently Reading?</label>
+          </div>
+        </div>
+        <!-- TODO add metadata fields-->
+        <button class="btn btn-primary" type="submit">Add Book</button>
+      </form>
+    </div>
+    <script>
+      const form = document.getElementById("addBookForm");
+      
+      const serialize_form = form => JSON.stringify(
+        Array.from(new FormData(form).entries())
+          .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
+      );
+      
+      $('#addBookForm').on('submit', function(event) {
+        event.preventDefault();
+        const json = serialize_form(this);
+        $.ajax({
+          type: 'POST',
+          url: '/api/books',
+          dataType: 'json',
+          data: json,
+          contentType: 'application/json',
+          success: function(data) {
+            if (window.confirm(data.message)) {
+              window.location.assign('/books');
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            alert(jqXHR.responseJSON.message)
+          }
+        })
+      });
+    </script>
+  </body>
+</html>
