@@ -1,11 +1,11 @@
 import express from 'express';
-import path from 'path';
-import { getBooksPageData } from '../controllers/booksController.js';
+
+import { renderBooks, renderRandomBook } from '../controllers/booksController.js';
 const router = express.Router();
 
-router.get("/", getBooksPageData);
+router.get("/", renderBooks);
 router.get("/add", function(req, res) {
   res.render('add-book');
 })
-
+router.get("/rand", renderRandomBook)
 export default router;
