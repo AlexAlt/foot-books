@@ -10,7 +10,6 @@ export const verifyJWT = (req, res, next) => {
     process.env.REFRESH_TOKEN_SECRET, 
     (error, decoded) => {
       if (error) return res.sendStatus(403);
-      console.log(decoded)
       req.username = decoded.username;
       next();
     }

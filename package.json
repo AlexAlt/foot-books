@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "It picks our next bookclub book",
   "main": "index.js",
+  "engines": { "node": "16.x" },
   "scripts": {
     "start": "node index",
     "dev": "nodemon index",
