@@ -4,7 +4,11 @@ import express from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
 import connectDB from './config/dbConn.js';
+import { verifyJWT } from './middleware/verifyJWT.js';
+import cookieParser from 'cookie-parser';
 import rootRoutes from './routes/root.js';
+import loginRoutes from './routes/login.js'
+import authRoutes from './routes/api/auth.js'
 import booksRoutes from './routes/api/books.js';
 import booksHTMLRoutes from './routes/books.js';
 
@@ -14,10 +18,15 @@ const PORT = process.env.PORT;
 connectDB();
 
 app.use(express.json());
-app.set('view engine', 'pug')
+app.use(cookieParser());
+app.set('view engine', 'pug');
 
-app.use(express.static(path.resolve(process.cwd(), 'public')));
 app.use('/', rootRoutes);
+app.use('/login', loginRoutes)
+app.use('/api/auth', authRoutes)
+
+app.use(verifyJWT)
+// everything besides the root route should require auth
 app.use('/books', booksHTMLRoutes);
 app.use('/api/books', booksRoutes);
 
